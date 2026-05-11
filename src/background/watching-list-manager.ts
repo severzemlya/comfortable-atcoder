@@ -65,6 +65,13 @@ export class WatchingListManager<DataType> {
     return this.defaultData;
   }
 
+  async entries(): Promise<Array<[string, DataType]>> {
+    const watchingList = await this.getCurrentWatchingList();
+    return Object.entries(watchingList).map(
+      ([key, value]): [string, DataType] => [key.replace(/^#id:/, ''), value.data],
+    );
+  }
+
   async remove(watchingId: string) {
     const watchingList = await this.getCurrentWatchingList();
     // update

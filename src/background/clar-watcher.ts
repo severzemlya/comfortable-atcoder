@@ -1,5 +1,5 @@
 import { createNotification } from './notification';
-import * as Betalib from '../content/betalib';
+import { Contest } from '../lib/atcoder';
 import { WatchingListManager } from './watching-list-manager';
 import { Lock } from '../lib/lock';
 
@@ -11,7 +11,7 @@ async function getClarCount(contestId: string): Promise<number> {
   return curClarCount;
 }
 
-export async function checkClarification(contest: Betalib.Contest, notifyLock: Lock) {
+export async function checkClarification(contest: Contest, notifyLock: Lock) {
   const clarCount = await getClarCount(contest.id);
   const prevClarCount = await watchingClarManager.get(contest.id);
   if (clarCount > prevClarCount) {
@@ -19,7 +19,7 @@ export async function checkClarification(contest: Betalib.Contest, notifyLock: L
     createNotification({
       data: {
         type: 'basic',
-        iconUrl: chrome.extension.getURL('image/question.png'),
+        iconUrl: chrome.runtime.getURL('image/question.png'),
         title: 'Atcoder',
         message: 'New Clarification',
       },

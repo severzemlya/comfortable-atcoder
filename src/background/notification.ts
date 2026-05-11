@@ -1,5 +1,8 @@
 import { Lock } from '../lib/lock';
-import { sleep } from '../content/all';
+
+async function sleep(ms: number): Promise<void> {
+  await new Promise(resolve => setTimeout(resolve, ms));
+}
 
 export interface CreateNotificationParam {
   data: chrome.notifications.NotificationOptions;

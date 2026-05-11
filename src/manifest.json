@@ -1,7 +1,7 @@
 {
 	"name": "Comfortable Atcoder",
 	"version": "1.6.8",
-	"manifest_version": 2,
+	"manifest_version": 3,
 	"description": "Comfort your atcoder life. For more detail, visit https://github.com/drafear/comfortable-atcoder",
 	"author": "drafear",
 	"content_scripts": [
@@ -74,26 +74,37 @@
 				"*://*.contest.atcoder.jp/*"
 			],
 			"js": [
+				"lib/jquery.min.js",
 				"content/link-to-beta.js"
 			],
 			"run_at": "document_start"
 		}
 	],
 	"web_accessible_resources": [
-		"image/beta.png"
+		{
+			"resources": [
+				"image/beta.png"
+			],
+			"matches": [
+				"*://*.contest.atcoder.jp/*"
+			]
+		}
 	],
 	"background": {
-		"scripts": [
-			"lib/jquery.min.js",
-			"background/oninstall.js",
-			"background/dispatcher.js"
-		],
-		"persistent": true
+		"service_worker": "background/dispatcher.js"
 	},
-	"options_page": "options-page/options.html",
+	"options_ui": {
+		"page": "options-page/options.html",
+		"open_in_tab": true
+	},
 	"permissions": [
+		"alarms",
 		"notifications",
 		"storage"
+	],
+	"host_permissions": [
+		"*://atcoder.jp/*",
+		"*://*.contest.atcoder.jp/*"
 	],
 	"icons": {
 		"16": "image/icon.png",
