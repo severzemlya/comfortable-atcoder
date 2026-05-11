@@ -20,17 +20,20 @@ async function getSubmission(submissionId: string) {
   return null;
 }
 
-chrome.runtime.onMessage.addListener(async (message, _, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   if (!('type' in message) || !('id' in message)) {
     sendResponse({ error: `result-notify: illegal format of message` });
-    return;
+    return false;
   }
-  switch (message.type) {
-    case 'get-submission':
-      const result = await getSubmission(message.id);
-      sendResponse(result);
-      break;
-    default:
-      sendResponse({ error: `result-notify: unknown message type: ${message.type}` });
-  }
+  (async () => {
+    switch (message.type) {
+      case 'get-submission':
+        const result = await getSubmission(message.id);
+        sendResponse(result);
+        break;
+      default:
+        sendResponse({ error: `result-notify: unknown message type: ${message.type}` });
+    }
+  })();
+  return true;
 });

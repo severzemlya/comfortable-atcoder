@@ -37,7 +37,7 @@ function addBetaButton($ul: JQuery<HTMLElement>): void {
           .append(
             $('<img>')
               .attr({
-                src: chrome.extension.getURL('image/beta.png'),
+                src: chrome.runtime.getURL('image/beta.png'),
                 alt: 'β',
               })
               .css({ width: '14px', height: '14px', border: 0, margin: 0, padding: 0 }),
