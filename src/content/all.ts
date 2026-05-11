@@ -11,7 +11,7 @@ export function isEnable(storageKey: string): Promise<boolean> {
 }
 
 export async function domLoad(): Promise<void> {
-  await new Promise(resolve => {
+  await new Promise<void>(resolve => {
     $(() => {
       resolve();
     });

@@ -11,8 +11,8 @@ export class WatchingListManager<DataType> {
   }
 
   async clear() {
-    await new Promise(resolve => {
-      chrome.storage.local.set({ [this.storageKey]: {} }, resolve);
+    await new Promise<void>(resolve => {
+      chrome.storage.local.set({ [this.storageKey]: {} }, () => resolve());
     });
   }
 
@@ -47,8 +47,8 @@ export class WatchingListManager<DataType> {
     };
     // save
     console.log("save", watchingList);
-    await new Promise(resolve => {
-      chrome.storage.local.set({ [this.storageKey]: watchingList }, resolve);
+    await new Promise<void>(resolve => {
+      chrome.storage.local.set({ [this.storageKey]: watchingList }, () => resolve());
     });
   }
 
@@ -77,8 +77,8 @@ export class WatchingListManager<DataType> {
     // update
     delete watchingList[this.getKey(watchingId)];
     // save
-    await new Promise(resolve => {
-      chrome.storage.local.set({ [this.storageKey]: watchingList }, resolve);
+    await new Promise<void>(resolve => {
+      chrome.storage.local.set({ [this.storageKey]: watchingList }, () => resolve());
     });
   }
 }

@@ -20,7 +20,7 @@ export async function createNotification({ data, href }: CreateNotificationParam
     };
     chrome.notifications.onClicked.addListener(clickHandler);
     // create notification and get notification id
-    await new Promise(resolve => {
+    await new Promise<void>(resolve => {
       chrome.notifications.create(data, async id => {
         notificationId = id;
         resolve();
