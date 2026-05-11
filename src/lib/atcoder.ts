@@ -11,6 +11,7 @@ export class Contest {
 export interface SubmissionOption {
   contest: Contest;
   id: string;
+  problemId: string;
   probTitle: string;
   score: string;
   judgeStatus: JudgeStatus;
@@ -25,6 +26,8 @@ export class Submission {
 
   public readonly score: string;
 
+  public readonly problemId: string;
+
   public readonly judgeStatus: JudgeStatus;
 
   public readonly execTime: string | undefined;
@@ -37,9 +40,10 @@ export class Submission {
 
   public readonly detailAbsoluteUrl: string;
 
-  constructor({ contest, id, probTitle, score, judgeStatus, execTime, memoryUsage }: SubmissionOption) {
+  constructor({ contest, id, problemId, probTitle, score, judgeStatus, execTime, memoryUsage }: SubmissionOption) {
     this.contest = contest;
     this.id = id;
+    this.problemId = problemId;
     this.score = score;
     this.judgeStatus = judgeStatus;
     this.execTime = execTime;

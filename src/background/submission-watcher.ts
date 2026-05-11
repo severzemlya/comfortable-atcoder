@@ -11,6 +11,7 @@ interface MessageResultError {
 interface SubmissionMessage {
   contest: Contest;
   id: string;
+  problemId: string;
   probTitle: string;
   score: string;
   judgeStatus: JudgeStatus;
@@ -27,6 +28,7 @@ interface JudgeResultImageStyle {
 interface WatchingSubmission {
   contestId: string;
   id: string;
+  problemId: string;
   probTitle: string;
   score: string;
   detailAbsoluteUrl: string;
@@ -142,6 +144,7 @@ function parseSubmissionFromDetailHtml(html: string, submission: Submission): Su
   return new Submission({
     contest: submission.contest,
     id: submission.id,
+    problemId: submission.problemId,
     probTitle: submission.probTitle,
     score,
     judgeStatus: parseJudgeStatus(statusText),
@@ -157,6 +160,7 @@ class SubmissionWatcher {
     return new Submission({
       contest: new Contest(this.watchingSubmission.contestId),
       id: this.watchingSubmission.id,
+      problemId: this.watchingSubmission.problemId,
       probTitle: this.watchingSubmission.probTitle,
       score: this.watchingSubmission.score,
       judgeStatus: parseJudgeStatus(this.watchingSubmission.prevStatusText),
@@ -275,6 +279,7 @@ export async function watchSubmissionRegister(submission: SubmissionMessage): Pr
     await watchingSubmissionManager.set(submission.id, {
       contestId: submission.contest.id,
       id: submission.id,
+      problemId: submission.problemId,
       probTitle: submission.probTitle,
       score: submission.score,
       detailAbsoluteUrl: submission.detailAbsoluteUrl,

@@ -1,10 +1,10 @@
-export function isEnable(storageKey: string): Promise<boolean> {
+export function isEnable(storageKey: string, defaultValue = false): Promise<boolean> {
   return new Promise(resolve => {
     chrome.storage.sync.get([storageKey], result => {
       if (storageKey in result) {
         resolve(Boolean(result[storageKey]));
       } else {
-        resolve(false);
+        resolve(defaultValue);
       }
     });
   });
@@ -18,8 +18,8 @@ export async function domLoad(): Promise<void> {
   });
 }
 
-export async function runIfEnableAndLoad(storageKey: string, fn: Function): Promise<void> {
-  const [enable] = await Promise.all([isEnable(storageKey), domLoad()]);
+export async function runIfEnableAndLoad(storageKey: string, fn: Function, defaultValue = false): Promise<void> {
+  const [enable] = await Promise.all([isEnable(storageKey, defaultValue), domLoad()]);
   if (enable) {
     fn();
   }
