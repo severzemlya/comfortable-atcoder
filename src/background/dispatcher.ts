@@ -1,10 +1,8 @@
 import { createNotification } from './notification'
 import { resumeWatchingSubmissions, watchSubmissionRegister } from './submission-watcher';
 import { checkClarification } from './clar-watcher';
-import { Lock } from '../lib/lock';
+import { notifyLock } from './notify-lock';
 import './oninstall';
-
-const notifyLock = new Lock();
 
 resumeWatchingSubmissions();
 

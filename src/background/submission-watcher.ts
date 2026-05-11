@@ -2,6 +2,7 @@ import { Lock } from '../lib/lock';
 import { Contest, JudgeStatus, parseJudgeStatus, Submission } from '../lib/atcoder';
 import { createNotification } from './notification';
 import { WatchingListManager } from './watching-list-manager';
+import { notifyLock } from './notify-lock';
 
 interface MessageResultError {
   error: string;
@@ -306,6 +307,9 @@ chrome.alarms.onAlarm.addListener(alarm => {
   const submissionId = alarm.name.slice(alarmNamePrefix.length);
   (async () => {
     const watchingSubmission = await watchingSubmissionManager.get(submissionId);
-    await new SubmissionWatcher(watchingSubmission, lock).step();
-  })();
+    if (watchingSubmission === null) return;
+    await new SubmissionWatcher(watchingSubmission, notifyLock).step();
+  })().catch(error => {
+    console.error('SubmissionWatcher alarm error:', error);
+  });
 });
