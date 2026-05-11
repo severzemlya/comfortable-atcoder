@@ -74,6 +74,7 @@
 				"*://*.contest.atcoder.jp/*"
 			],
 			"js": [
+				"lib/jquery.min.js",
 				"content/link-to-beta.js"
 			],
 			"run_at": "document_start"
