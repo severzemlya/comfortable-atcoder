@@ -118,7 +118,7 @@ export function parseSubmissionFromDetailPage(htmlRoot: Document, submission: Su
     throw new Error("getCurrentSubmission: Can't get status");
   }
   const $tds = $table.find('td');
-  const { id: submissionId, contest, probTitle } = submission;
+  const { id: submissionId, contest, problemId, probTitle } = submission;
   const score = $tds.eq(indexes.score).text();
   const judgeStatus = parseJudgeStatus(
     $tds
@@ -128,7 +128,7 @@ export function parseSubmissionFromDetailPage(htmlRoot: Document, submission: Su
   );
   const execTime = 'time' in indexes ? $tds.eq(indexes.time).text() : undefined;
   const memoryUsage = 'memory' in indexes ? $tds.eq(indexes.memory).text() : undefined;
-  return new Submission({ contest, id: submissionId, probTitle, score, judgeStatus, execTime, memoryUsage });
+  return new Submission({ contest, id: submissionId, problemId, probTitle, score, judgeStatus, execTime, memoryUsage });
 }
 
 export function getCurrentContest(): Contest {
@@ -140,17 +140,7 @@ export function watchSubmission(submission: Submission): void {
   chrome.runtime.sendMessage({ type: 'watch-submission-register', data: submission });
 }
 
-export async function getMySubmissions(): Promise<Submission[]> {
-  const contest = getCurrentContest();
-  let $html: JQuery<HTMLElement>;
-  // 既に自分の提出ページを開いているならfetchする必要なし
-  if (location.pathname.match(new RegExp(`\\/contests\\/${contest.id}\\/submissions\\/me\\/?$`))) {
-    $html = $('html');
-  } else {
-    const response = await fetch(`${contest.url}/submissions/me?lang=ja`);
-    const html = await response.text();
-    $html = $(html);
-  }
+function parseMySubmissions($html: JQuery<HTMLElement>, contest: Contest): Submission[] {
   const $th = $('thead > tr > th', $html);
   const indexes = getIndexes($th, {
     prob: ['問題', 'Task'],
@@ -168,6 +158,9 @@ export async function getMySubmissions(): Promise<Submission[]> {
   if (!('score' in indexes)) {
     throw new Error("Betalib: getMySubmissions: Can't get score");
   }
+  if (!('prob' in indexes)) {
+    throw new Error("Betalib: getMySubmissions: Can't get prob");
+  }
   const res: Submission[] = [];
   $('tbody > tr', $html).each((idx, elem) => {
     const $tds = $(elem).children('td');
@@ -176,6 +169,10 @@ export async function getMySubmissions(): Promise<Submission[]> {
       .eq(indexes.prob)
       .children('a')
       .text();
+    const problemId = (($tds
+      .eq(indexes.prob)
+      .children('a')
+      .attr('href') as string).match(/\/tasks\/([^/?#]+)/) as string[])[1];
     const score = $tds.eq(indexes.score).text();
     const judgeStatus = parseJudgeStatus(
       $tds
@@ -187,9 +184,40 @@ export async function getMySubmissions(): Promise<Submission[]> {
     if (!/s$/.test(execTime)) execTime = undefined;
     let memoryUsage: string | undefined = $tds.eq(indexes.memory).text();
     if (!/B$/.test(memoryUsage)) memoryUsage = undefined;
-    res[idx] = new Submission({ contest, id: submissionId, probTitle, score, judgeStatus, execTime, memoryUsage });
+    res[idx] = new Submission({ contest, id: submissionId, problemId, probTitle, score, judgeStatus, execTime, memoryUsage });
   });
   return res;
+}
+
+async function getMySubmissionsPage(contest: Contest, page: number): Promise<JQuery<HTMLElement>> {
+  if (page === 1 && location.pathname.match(new RegExp(`\\/contests\\/${contest.id}\\/submissions\\/me\\/?$`))) {
+    return $('html');
+  }
+  const response = await fetch(`${contest.url}/submissions/me?page=${page}&lang=ja`);
+  const html = await response.text();
+  return $(html);
+}
+
+export async function getMySubmissions(): Promise<Submission[]> {
+  const contest = getCurrentContest();
+  return parseMySubmissions(await getMySubmissionsPage(contest, 1), contest);
+}
+
+export async function getAllMySubmissions(): Promise<Submission[]> {
+  const contest = getCurrentContest();
+  const submissions: Submission[] = [];
+  for (let page = 1; ; ++page) {
+    const $html = await getMySubmissionsPage(contest, page);
+    const pageSubmissions = parseMySubmissions($html, contest);
+    if (pageSubmissions.length === 0) {
+      break;
+    }
+    submissions.push(...pageSubmissions);
+    if ($('a[rel="next"], .pagination li.next:not(.disabled) a', $html).length === 0) {
+      break;
+    }
+  }
+  return submissions;
 }
 
 export async function getProblems(): Promise<Problem[]> {

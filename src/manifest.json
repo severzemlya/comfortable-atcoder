@@ -31,7 +31,8 @@
 			"js": [
 				"content/betalib.js",
 				"content/dropdown-modify.js",
-				"content/clar-notify.js"
+				"content/clar-notify.js",
+				"content/tasks-result-color.js"
 			],
 			"css": [
 				"css/dropdown-modify.css"

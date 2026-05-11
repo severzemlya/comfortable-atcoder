@@ -168,6 +168,7 @@ const groups = [
     new Choice('Enable', new Switch('enable', 'disable', 'submission-warning')),
     ...makeWarnChoices(languages),
   ]),
+  new Group('Tasks Page', [new Choice('Result Color', new Switch('enable', 'disable', 'tasks-result-color'))]),
 ];
 
 document.addEventListener('DOMContentLoaded', async () => {
