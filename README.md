@@ -22,10 +22,12 @@ A Chrome extension that makes your AtCoder life more comfortable.
 
 No pre-built release is published for this fork. Build it locally and load it as an unpacked extension.
 
+Requires Node.js 22 or later and npm 10 or later.
+
 ```bash
 git clone https://github.com/severzemlya/comfortable-atcoder.git
 cd comfortable-atcoder
-npm install
+npm ci
 npm run build
 ```
 
@@ -38,7 +40,7 @@ Then:
 ## Development
 
 ```bash
-npm install
+npm ci
 npm run watch
 ```
 

@@ -2,42 +2,25 @@
   "name": "comfortable-atcoder",
   "description": "Comfort your atcoder life. For more detail, visit https://github.com/drafear/comfortable-atcoder",
   "scripts": {
-    "build": "run-s build:*",
-    "build:init": "rm -rf dist",
-    "build:cp": "cp -r src dist && rm -rf dist/**/*.less dist/**/*.ts dist/**/*.map",
-    "build:css": "less-watch-compiler --run-once src dist",
-    "build:ts": "parcel build --target node src/**/*.ts --no-source-maps",
+    "build": "npm run typecheck && npm run build:dist",
+    "build:dist": "node scripts/build.cjs",
     "start": "npm run watch",
-    "watch": "run-p watch:*",
-    "watch:less": "less-watch-compiler src dist",
-    "watch:build": "parcel --target node src/**/*.ts --no-source-maps",
-    "watch:test": "jest --watch",
-    "package": "npm run build && zip -rq Release.zip dist"
+    "watch": "node scripts/build.cjs --watch",
+    "typecheck": "tsc --noEmit",
+    "package": "npm run build && node scripts/package.cjs"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@types/async-lock": "1.1.0",
     "@types/chrome": "0.0.75",
-    "@types/jest": "23.3.10",
     "@types/jquery": "3.3.23",
-    "ajv": "6.6.1",
-    "eslint": "5.9.0",
-    "eslint-config-xo-typescript": "0.3.0",
-    "eslint-plugin-typescript": "0.14.0",
-    "event-stream": "3.3.4",
-    "jest": "23.6.0",
-    "less-watch-compiler": "1.11.3",
-    "npm-run-all": "4.1.3",
-    "parcel": "1.10.3",
-    "semantic-release": "15.9.15",
-    "ts-jest": "23.10.5",
-    "typescript": "3.2.1",
-    "typescript-eslint-parser": "21.0.2",
-    "xo": "0.23.0"
+    "archiver": "7.0.1",
+    "chokidar": "4.0.3",
+    "esbuild": "0.28.0",
+    "less": "4.6.4",
+    "typescript": "5.9.3"
   },
   "engines": {
-    "node": "10",
-    "npm": "6.3"
+    "node": ">=22",
+    "npm": ">=10"
   },
   "private": true,
   "default_locale": "en",
@@ -45,19 +28,6 @@
     "dist",
     "src/lib"
   ],
-  "jest": {
-    "testMatch": [
-      "**/*.test.(js|ts)"
-    ],
-    "transform": {
-      ".\\.ts$": "ts-jest"
-    },
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "json"
-    ]
-  },
   "prettier": {
     "bracketSpacing": true,
     "printWidth": 120,
@@ -84,42 +54,5 @@
     "fail": [
       "@semantic-release/github"
     ]
-  },
-  "xo": {
-    "extends": "xo-typescript",
-    "prettier": true,
-    "envs": [
-      "es6"
-    ],
-    "space": true,
-    "strict": true,
-    "rules": {
-      "quotes": [
-        "error",
-        "single",
-        {
-          "avoidEscape": true
-        }
-      ],
-      "typescript/explicit-function-return-type": 0,
-      "no-useless-constructor": 0,
-      "no-alert": 0,
-      "no-negated-condition": 0,
-      "capitalized-comments": 0,
-      "no-constant-condition": [
-        "error",
-        {
-          "checkLoops": false
-        }
-      ],
-      "default-case": 0,
-      "no-irregular-whitespace": 0,
-      "no-await-in-loop": 0,
-      "no-undef": 0,
-      "comma-dangle": [
-        "error",
-        "always-multiline"
-      ]
-    }
   }
 }
